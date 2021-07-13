@@ -170,51 +170,9 @@ function generateOptions() {
   }
   const stepSize = (newMax - newMin) / NUM_LABELS;
 
-  console.log(JSON.stringify(datasets));
-
-  const stubdatasets = [
-    {
-      label: "example data 1 (2 → 6, Δ 4)",
-      data: [
-        { x: new Date(1619816400000), y: 2 },
-        { x: new Date(1622494800000), y: 3 },
-        { x: new Date(1625086800000), y: 1 },
-      ],
-      fill: "origin",
-      backgroundColor: "rgb(255, 193, 72)",
-      barPercentage: 1,
-      categoryPercentage: 0.9,
-    },
-    {
-      label: "example data 2 (2 → 14, Δ 12)",
-      data: [
-        { x: new Date(1619816400000), y: 2 },
-        { x: new Date(1622494800000), y: 10 },
-        { x: new Date(1625086800000), y: 2 },
-      ],
-      fill: "origin",
-      backgroundColor: "rgb(54, 190, 223)",
-      barPercentage: 1,
-      categoryPercentage: 0.9,
-    },
-    {
-      label: "example data 3 (3 → 5, Δ 2)",
-      data: [
-        { x: new Date(1619816400000), y: 3 },
-        { x: new Date(1622494800000), y: 2 },
-        { x: new Date(1625086800000), y: 0 },
-      ],
-      fill: "origin",
-      backgroundColor: "rgb(18, 196, 87)",
-      barPercentage: 1,
-      categoryPercentage: 0.9,
-    },
-  ];
-
   return {
     data: {
-      // labels: stubdatasets.map((dataset) => dataset.backgroundColor),
-      datasets: stubdatasets,
+      datasets,
     },
     type: "bar",
     options: {
@@ -223,7 +181,7 @@ function generateOptions() {
       spanGaps: true,
       scales: {
         yAxes: [
-          {
+          datasets.map(() => ({
             type: "linear",
             stacked: true,
             gridLines: {
@@ -237,10 +195,10 @@ function generateOptions() {
               stepSize,
               maxTicksLimit: NUM_LABELS + 1,
             },
-          },
+          })),
         ],
         xAxes: [
-          {
+          datasets.map(() => ({
             type: "time",
             stacked: true,
             gridLines: {
@@ -250,12 +208,14 @@ function generateOptions() {
               unit: "month",
             },
             distribution: "series",
-          },
+          })),
         ],
       },
     },
   };
 }
+
+function BrokenChart() {}
 
 function App() {
   const canvasRef = useRef(null);
