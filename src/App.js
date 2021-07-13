@@ -68,8 +68,6 @@ function generateOptions(chartType) {
     };
   });
 
-  // console.log({ seriesAfterTransformation: series });
-
   // Make sure each series item has the same number of data points
   const longestSeries = series.reduce(
     (prev, next) => (next.values.length > prev.values.length ? next : prev),
@@ -230,9 +228,7 @@ function generateOptions(chartType) {
     },
     type: chartType,
     options: {
-      // responsive: true,
       showLines: true,
-      // spanGaps: true,
       scales: {
         yAxes: [
           {
