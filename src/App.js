@@ -5,7 +5,7 @@ import "./App.css";
 
 const generateCumulative = (v) => v && { x: new Date(v.t), y: v.n };
 
-function generateOptions() {
+function generateOptions(chartType = "bar") {
   const isCumulative = false;
 
   let series = [
@@ -102,13 +102,22 @@ function generateOptions() {
       }
     }
 
+    const barChartOptions = {
+      barPercentage: 1.0,
+      categoryPercentage: 0.9,
+    };
+
+    const lineChartOptions = {
+      lineTension: 0,
+    };
+
     const newDataSet = {
       label: s.label,
       data: data.map((v) => v && { x: new Date(v.t).getTime(), y: v.n }),
       fill: s.fill || "origin",
       backgroundColor: s.backgroundColor || "rgb(18, 196, 87)",
-      barPercentage: 1.0,
-      categoryPercentage: 0.9,
+      ...(chartType === "bar" ? barChartOptions : {}),
+      ...(chartType === "line" ? lineChartOptions : {}),
     };
 
     if (isCumulative) {
@@ -170,18 +179,64 @@ function generateOptions() {
   }
   const stepSize = (newMax - newMin) / NUM_LABELS;
 
+  if (chartType === "bar") {
+    return {
+      data: {
+        datasets,
+      },
+      type: chartType,
+      options: {
+        responsive: true,
+        // showLines: true,
+        spanGaps: true,
+        scales: {
+          yAxes: [
+            datasets.map(() => ({
+              type: "linear",
+              stacked: true,
+              gridLines: {
+                offsetGridLines: true,
+              },
+              ticks: {
+                // For data display 'integrity', on bar charts, the y axis should start at 0
+                // see: http://www.chadskelton.com/2018/06/bar-charts-should-always-start-at-zero.html
+                min: 0,
+                max,
+                stepSize,
+                maxTicksLimit: NUM_LABELS + 1,
+              },
+            })),
+          ],
+          xAxes: [
+            datasets.map(() => ({
+              type: "time",
+              stacked: true,
+              gridLines: {
+                offsetGridLines: true,
+              },
+              time: {
+                unit: "month",
+              },
+              distribution: "series",
+            })),
+          ],
+        },
+      },
+    };
+  }
+
   return {
     data: {
       datasets,
     },
-    type: "bar",
+    type: chartType,
     options: {
       responsive: true,
-      // showLines: true,
+      showLines: true,
       spanGaps: true,
       scales: {
         yAxes: [
-          datasets.map(() => ({
+          {
             type: "linear",
             stacked: true,
             gridLines: {
@@ -195,10 +250,10 @@ function generateOptions() {
               stepSize,
               maxTicksLimit: NUM_LABELS + 1,
             },
-          })),
+          },
         ],
         xAxes: [
-          datasets.map(() => ({
+          {
             type: "time",
             stacked: true,
             gridLines: {
@@ -208,20 +263,18 @@ function generateOptions() {
               unit: "month",
             },
             distribution: "series",
-          })),
+          },
         ],
       },
     },
   };
 }
 
-function BrokenChart() {}
-
-function App() {
+function ChartComponent({ chartType }) {
   const canvasRef = useRef(null);
   const chart = useRef(null);
 
-  const options = useMemo(generateOptions, []);
+  const options = useMemo(() => generateOptions(chartType), [chartType]);
 
   useEffect(() => {
     if (chart.current) {
@@ -236,9 +289,14 @@ function App() {
     );
   }, [options]);
 
+  return <canvas ref={canvasRef} id={`${chartType}-chart-component`} />;
+}
+
+function App() {
   return (
     <div className="App">
-      <canvas ref={canvasRef} />
+      {/* <ChartComponent chartType="bar" /> */}
+      <ChartComponent chartType="line" />
     </div>
   );
 }
