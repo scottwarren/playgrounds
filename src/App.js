@@ -166,32 +166,6 @@ function generateOptions(chartType, { useLargeDataSet = false }) {
       return next.y;
     return prev;
   }, Infinity);
-  const max = datasets
-    .map((dataset) =>
-      dataset.data.reduce((prev, next) => {
-        if (next && next.y && typeof next.y === "number" && next?.y > prev)
-          return next.y;
-        return prev;
-      }, 0)
-    )
-    .reduce((prev, next) => prev + next, 0);
-  const NUM_LABELS = 8;
-  const BUFFER_MULTIPLIER = 1.1;
-  // Find smallest Number(max-min) such that
-  // We have even spaced steps between the graph rendered min and max, and at least 5 % buffer on top and below of graph
-  let newMin = Math.max(Math.floor(min * (1 / BUFFER_MULTIPLIER)), 0);
-  let newMax = Math.ceil(max * BUFFER_MULTIPLIER);
-  const mod = (newMax - newMin) % NUM_LABELS;
-  if (mod !== 0) {
-    const toAdd = NUM_LABELS - mod;
-    newMin -= Math.ceil(toAdd / 2);
-    newMax += Math.floor(toAdd / 2);
-    if (newMin < 0) {
-      newMax -= newMin;
-      newMin = 0;
-    }
-  }
-  const stepSize = (newMax - newMin) / NUM_LABELS;
 
   if (chartType === "bar") {
     return {
@@ -213,9 +187,6 @@ function generateOptions(chartType, { useLargeDataSet = false }) {
                 // For data display 'integrity', on bar charts, the y axis should start at 0
                 // see: http://www.chadskelton.com/2018/06/bar-charts-should-always-start-at-zero.html
                 min: 0,
-                max,
-                stepSize,
-                maxTicksLimit: NUM_LABELS + 1,
               },
             })),
           ],
@@ -251,9 +222,6 @@ function generateOptions(chartType, { useLargeDataSet = false }) {
             type: "linear",
             ticks: {
               min,
-              max,
-              stepSize,
-              maxTicksLimit: NUM_LABELS + 1,
             },
           },
         ],
