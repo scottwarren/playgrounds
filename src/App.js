@@ -4,9 +4,29 @@ import styled from "styled-components";
 
 import { generateChartOptions } from "./generateChartOptions";
 
-const Button = styled.button``;
+const Button = styled.button.attrs({ type: "button" })`
+  background-color: transparent;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  box-sizing: border-box;
+  height: 36px;
 
-const ButtonContainer = styled.div``;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.25px;
+  text-transform: none;
+  opacity: 1;
+  color: #3c4043;
+
+  &:hover {
+    background-color: #f1f3f4;
+  }
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  gap: 0.5em;
+`;
 
 const ChartsContainer = styled.div`
   display: flex;
@@ -14,6 +34,10 @@ const ChartsContainer = styled.div`
 const ChartContainer = styled.div`
   width: 50%;
 `;
+
+const CurrentValueList = styled.ul``;
+
+const CurrentValueListItem = styled.li``;
 
 const Container = styled.div``;
 
@@ -50,19 +74,24 @@ function App() {
   return (
     <Container>
       <ButtonContainer>
-        <Button type="button" onClick={() => setUseLargeDataSet(true)}>
+        <Button onClick={() => setUseLargeDataSet(true)}>
           use large dataset
         </Button>
-        <Button type="button" onClick={() => setUseLargeDataSet(false)}>
+        <Button onClick={() => setUseLargeDataSet(false)}>
           use small dataset
         </Button>
-      </ButtonContainer>
-      <ButtonContainer>
-        isCumulative current value: {JSON.stringify(isCumulative)}
-        <button type="button" onClick={() => setIsCumulative(!isCumulative)}>
+        <Button onClick={() => setIsCumulative(!isCumulative)}>
           toggle is cumulative?
-        </button>
+        </Button>
       </ButtonContainer>
+      <CurrentValueList>
+        <CurrentValueListItem>
+          isCumulative: {JSON.stringify(isCumulative)}
+        </CurrentValueListItem>
+        <CurrentValueListItem>
+          useLargeDataSet: {JSON.stringify(useLargeDataSet)}
+        </CurrentValueListItem>
+      </CurrentValueList>
 
       <ChartsContainer>
         <ChartContainer>
