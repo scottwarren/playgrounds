@@ -48,7 +48,6 @@ function generateOptions(chartType) {
     },
   ];
 
-  // console.log({ series });
   // Make sure each series has data points at the beginning and start of the date range or else the chart will be messed up
   series = series.map((serie) => {
     const extractValue = serie.extractValue ?? ((val) => val.n);
