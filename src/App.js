@@ -5,8 +5,9 @@ import "./App.css";
 
 const generateCumulative = (v) => v && { x: new Date(v.t), y: v.n };
 
-function generateOptions(chartType = "bar") {
-  const isCumulative = false;
+function generateOptions(chartType) {
+  // This is a business logic rule, rather than a logical one
+  const isCumulative = chartType === "bar";
 
   let series = [
     {
@@ -187,8 +188,6 @@ function generateOptions(chartType = "bar") {
       type: chartType,
       options: {
         responsive: true,
-        // showLines: true,
-        spanGaps: true,
         scales: {
           yAxes: [
             datasets.map(() => ({
@@ -231,21 +230,15 @@ function generateOptions(chartType = "bar") {
     },
     type: chartType,
     options: {
-      responsive: true,
+      // responsive: true,
       showLines: true,
-      spanGaps: true,
+      // spanGaps: true,
       scales: {
         yAxes: [
           {
             type: "linear",
-            stacked: true,
-            gridLines: {
-              offsetGridLines: true,
-            },
             ticks: {
-              // For data display 'integrity', on bar charts, the y axis should start at 0
-              // see: http://www.chadskelton.com/2018/06/bar-charts-should-always-start-at-zero.html
-              min: 0,
+              min,
               max,
               stepSize,
               maxTicksLimit: NUM_LABELS + 1,
@@ -255,10 +248,6 @@ function generateOptions(chartType = "bar") {
         xAxes: [
           {
             type: "time",
-            stacked: true,
-            gridLines: {
-              offsetGridLines: true,
-            },
             time: {
               unit: "month",
             },
@@ -270,33 +259,30 @@ function generateOptions(chartType = "bar") {
   };
 }
 
-function ChartComponent({ chartType }) {
+function ChartComponent({ chartType = "line", ...props }) {
   const canvasRef = useRef(null);
-  const chart = useRef(null);
+  const chartJsRef = useRef(null);
 
   const options = useMemo(() => generateOptions(chartType), [chartType]);
 
   useEffect(() => {
-    if (chart.current) {
+    if (chartJsRef.current) {
       // This is required because when we change the data often (e.g. displaying monthly vs daily)
       // The previous hover events for certain labels and sections of the chart appear to remain afterwards
-      chart.current.destroy?.();
+      chartJsRef.current.destroy?.();
     }
 
-    chart.current = new Chart(
-      canvasRef.current.getContext("2d"),
-      generateOptions()
-    );
+    chartJsRef.current = new Chart(canvasRef.current.getContext("2d"), options);
   }, [options]);
 
-  return <canvas ref={canvasRef} id={`${chartType}-chart-component`} />;
+  return <canvas ref={canvasRef} />;
 }
 
 function App() {
   return (
     <div className="App">
-      {/* <ChartComponent chartType="bar" /> */}
       <ChartComponent chartType="line" />
+      <ChartComponent chartType="bar" />
     </div>
   );
 }
