@@ -213,6 +213,7 @@ function generateOptions(chartType) {
               },
               time: {
                 unit: "month",
+                tooltipFormat: "MMM YYYY",
               },
               distribution: "series",
             })),
@@ -246,6 +247,7 @@ function generateOptions(chartType) {
             type: "time",
             time: {
               unit: "month",
+              tooltipFormat: "MMM YYYY",
             },
             distribution: "series",
           },
