@@ -1,11 +1,11 @@
 import { Chart } from "chart.js";
-import { useRef, useEffect, useMemo } from "react";
+import { useRef, useEffect, useMemo, useState } from "react";
 
 import "./App.css";
 
 const generateCumulative = (v) => v && { x: new Date(v.t), y: v.n };
 
-function generateOptions(chartType) {
+function generateOptions(chartType, { useLargeDataSet = false }) {
   // This is a business logic rule, rather than a logical one
   const isCumulative = chartType === "bar";
 
@@ -47,6 +47,22 @@ function generateOptions(chartType) {
       ],
     },
   ];
+
+  if (useLargeDataSet) {
+    series = series.map((serie) => {
+      const newValues = serie.values.map((value) => {
+        return {
+          ...value,
+          n: value.n * 52,
+        };
+      });
+
+      return {
+        ...serie,
+        values: newValues,
+      };
+    });
+  }
 
   // Make sure each series has data points at the beginning and start of the date range or else the chart will be messed up
   series = series.map((serie) => {
@@ -256,11 +272,14 @@ function generateOptions(chartType) {
   };
 }
 
-function ChartComponent({ chartType = "line", ...props }) {
+function ChartComponent({ chartType = "line", useLargeDataSet, ...props }) {
   const canvasRef = useRef(null);
   const chartJsRef = useRef(null);
 
-  const options = useMemo(() => generateOptions(chartType), [chartType]);
+  const options = useMemo(
+    () => generateOptions(chartType, { useLargeDataSet }),
+    [chartType, useLargeDataSet]
+  );
 
   useEffect(() => {
     if (chartJsRef.current) {
@@ -276,10 +295,21 @@ function ChartComponent({ chartType = "line", ...props }) {
 }
 
 function App() {
+  const [useLargeDataSet, setUseLargeDataSet] = useState(false);
+
   return (
-    <div className="App">
-      <ChartComponent chartType="line" />
-      <ChartComponent chartType="bar" />
+    <div>
+      <div>
+        <button type="button" onClick={() => setUseLargeDataSet(true)}>
+          use large dataset
+        </button>
+        <button type="button" onClick={() => setUseLargeDataSet(false)}>
+          use small dataset
+        </button>
+      </div>
+
+      <ChartComponent chartType="line" useLargeDataSet={useLargeDataSet} />
+      <ChartComponent chartType="bar" useLargeDataSet={useLargeDataSet} />
     </div>
   );
 }
