@@ -112,7 +112,7 @@ function generateOptions(chartType) {
 
     const newDataSet = {
       label: s.label,
-      data: data.map((v) => v && { x: new Date(v.t).getTime(), y: v.n }),
+      data: data.map((v) => v && { x: new Date(v.t), y: v.n }),
       fill: s.fill || "origin",
       backgroundColor: s.backgroundColor || "rgb(18, 196, 87)",
       ...(chartType === "bar" ? barChartOptions : {}),
@@ -135,7 +135,7 @@ function generateOptions(chartType) {
                   sum: next.n,
                   array: [
                     ...prev.array,
-                    { x: new Date(next.t).getTime(), y: next.n - prev.sum },
+                    { x: new Date(next.t), y: next.n - prev.sum },
                   ],
                 },
           {
