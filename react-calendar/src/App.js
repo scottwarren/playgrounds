@@ -17,8 +17,8 @@ function App() {
     <div>
       <DataDisplayContainer>
         <h3>Selected Dates</h3>
-        <div>Start: {startDate.toISOString()}</div>
-        <div>End: {endDate.toISOString()}</div>
+        <div>Start: {startDate.toDateString()}</div>
+        <div>End: {endDate.toDateString()}</div>
       </DataDisplayContainer>
       <Calendar onChange={([start, end]) => { setStartDate(start); setEndDate(end); }} maxDetail='year' minDetail="year" view="year" returnValue="range" />
 
