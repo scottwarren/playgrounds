@@ -29,13 +29,17 @@ function formatMonth(unformattedMonth: string) {
   return leftPad(monthIndex, 2, '0');
 }
 
+function formatYear(unformattedYear: string) {
+  return unformattedYear;
+}
+
 export function dateParser(dates: string[]): string[] {
   return dates.map(date => {
     const [day, month, year] = date.split(' ');
 
     const formattedDay = formatDay(day);
     const formattedMonth = formatMonth(month);
-    const formattedYear = year;
+    const formattedYear = formatYear(year);
 
     return `${formattedYear}-${formattedMonth}-${formattedDay}`;
   });
